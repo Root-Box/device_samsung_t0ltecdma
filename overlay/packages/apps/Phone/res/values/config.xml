@@ -23,6 +23,11 @@
     <!-- Audio parameter for setting noise suppression-->
     <string name="in_call_noise_suppression_audioparameter">dualmic_enabled=false=true</string>
     
+    <!-- Determine whether calls to mute the microphone in PhoneUtils
+         are routed through the android.media.AudioManager class (true) or through
+         the com.android.internal.telephony.Phone interface (false). -->
+    <bool name="send_mic_mute_to_AudioManager">true</bool>
+    
     <!-- Sprint Message Wait Indicator Quirk
     If true, message wait indicators are hidden by default on this device
     unless the user enables it in Call Settings.  This quirk is necessary
