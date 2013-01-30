@@ -1,36 +1,36 @@
 import init.smdk4x12.usb.rc
 import init.bt.rc
 
-loglevel 9
-
 on init
-    mkdir /mnt/shell 0700 shell shell
     mkdir /mnt/shell/emulated 0700 shell shell
-    mkdir /mnt/shell/emulated/0 
     mkdir /storage 0550 system sdcard_r
     mkdir /storage/emulated 0555 root root
     mkdir /storage/sdcard1 0775 system system
     mkdir /storage/usbdisk0 0775 system system
-    
+
     export EXTERNAL_STORAGE /storage/emulated/legacy
     export SECONDARY_STORAGE /storage/sdcard1
     export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
     export EMULATED_STORAGE_TARGET /storage/emulated
 
     # for backwards compatibility
-    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
     symlink /storage/emulated/legacy /sdcard
     symlink /storage/emulated/legacy /mnt/sdcard
-    symlink /storage/emulated/legacy /storage/sdcard0    
+    symlink /storage/emulated/legacy /storage/sdcard0
+    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
     symlink /storage/sdcard1 /extSdCard
     symlink /storage/sdcard1 /mnt/extSdCard
     symlink /storage/usbdisk0 /usbdisk0
     symlink /storage/usbdisk0 /mnt/usbdisk0
-    
+
     mkdir /efs 0771 radio system
     mkdir /tombstones
     symlink /efs /factory
 
+# ko files for FM Radio
+    insmod /system/lib/modules/Si4709_driver.ko
+
+on init
     # WFD CES Demo
     chmod 0666 /dev/graphics/fb5
 
@@ -43,11 +43,9 @@ on fs
 
     setprop ro.crypto.fuse_sdcard true
     
-    mount ext4 /dev/block/mmcblk0p11 /tombstones rw wait noatime nosuid nodev journal_async_commit 
-    
-# Camera firmware
-    mkdir /data/cfw 0775 system system
-    
+    chown radio system /efs
+    chmod 0771 /efs
+
 #MDM requirement
     mkdir /firmware 0771 system system
     mount vfat /dev/block/mmcblk0p10 /firmware ro shortname=lower fmask=0133,dmask=0022
@@ -58,23 +56,20 @@ on fs
     mkdir /tombstones/wcnss 0775 system system
     mkdir /tombstones/dsps 0775 system system
     rmdir /tombstones/qcks
-    mkdir /tombstones/qcks 0771 system system
+    mkdir /tombstones/qcks 771 system system
     rmdir /tombstones/efs
-    mkdir /tombstones/efs 0771 system system
+    mkdir /tombstones/efs 771 system system
 
     chown system radio /dev/block/platform/dw_mmc/by-name
-    chmod 0775 /dev/block/platform/dw_mmc/by-name
-    
-    chown radio system /efs
-    chmod 0771 /efs
+    chmod 0775 /dev/block/platform/dw_mmc/by-name    
 
 on post-fs-data
      # we will remap this as /mnt/sdcard with the sdcard fuse tool
-     mkdir /data/media 0770 media_rw media_rw
-     
-     mkdir /data/misc/radio 0775 radio system
-	 
+     mkdir /data/media 0775 media_rw media_rw
+     chown media_rw media_rw /data/media
+
 #QCRIL
+
     #Create QMUX deamon socket area
     mkdir /dev/socket/qmux_radio 0770 radio radio
     chmod 2770 /dev/socket/qmux_radio
@@ -85,7 +80,7 @@ on post-fs-data
 
     # Allow QMUX daemon to assign port open wait time
     chown radio radio /sys/devices/virtual/hsicctl/hsicctl0/modem_wait
-	
+
     # To prevent out of order acknowledgements from making
     # connection tracking to treat them as not belonging to
     # the connection they belong to.
@@ -94,15 +89,6 @@ on post-fs-data
     # an ack packet comes out of order
     write /proc/sys/net/netfilter/nf_conntrack_tcp_be_liberal 1
 
-# SISO-ANDR_PERF :: START Changing scheduler to cfq and reseting cpu min freq to -1 after boot complete
-on property:sys.boot_completed=1
-    write /sys/block/mmcblk0/queue/scheduler cfq
-    write /sys/power/cpufreq_min_limit -1
-    write /proc/sys/net/ipv6/conf/rmnet_usb0/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_usb1/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_usb2/accept_ra 2
-    write /proc/sys/net/ipv6/conf/rmnet_usb3/accept_ra 2
-    
 # for AT distributor
     chown system radio /sys/module/cpuidle_exynos4/parameters/enable_mask
     chmod 0664 /sys/module/cpuidle_exynos4/parameters/enable_mask
@@ -110,14 +96,14 @@ on property:sys.boot_completed=1
 # Waketime fot fast dormancy
     chown system radio /sys/devices/platform/mdm_hsic_pm0/waketime
     chmod 0660 /sys/devices/platform/mdm_hsic_pm0/waketime
-
+    
 # data/log
     mkdir /data/log 0775 system log
     chown system log /data/log
     chmod 0775 /data/log
     chmod 0775 /data/anr
 
-# create data/gps for GPS demon
+    # create data/gps for GPS demon
     chown root system /dev/ttySAC1
     chmod 0660 /dev/ttySAC1
     chown root system /sys/class/sec/gps/GPS_PWR_EN/value
@@ -139,10 +125,11 @@ on property:sys.boot_completed=1
     chmod 0644 /efs/h2k.dat
 
 # Camera firmware
-    mkdir /data/cfw 0775 system system
-
-   chown system media /data/cfw/*
-   chmod 0775 /data/cfw/*
+	mkdir /data/cfw 0775 system system
+    chown system media /data/cfw/SlimISP_GK.bin
+    chmod 0775 /data/cfw/SlimISP_GK.bin
+    chown system media /data/cfw/SlimISP_ZK.bin
+    chmod 0775 /data/cfw/SlimISP_ZK.bin
 
 # Camera
     chown system radio /sys/class/camera/rear/rear_camfw
@@ -172,7 +159,7 @@ on property:sys.boot_completed=1
     setprop ro.nfc.port "I2C"
     chmod 0600 /dev/pn544
     chown nfc nfc /dev/pn544
-    
+
 # Vibrator
     chmod 0660 /dev/tspdrv
     chown root shell /dev/tspdrv
@@ -287,22 +274,6 @@ on property:sys.boot_completed=1
     chown system radio /sys/class/power_supply/battery/test_mode
     chown system radio /sys/class/power_supply/battery/wc_status
     chown system radio /sys/class/power_supply/battery/wpc_pin_state
-    
-    
-# CTIA event
-   chown sdcard_rw sdcard_rw /sys/class/power_supply/battery/call
-   chown sdcard_rw sdcard_rw /sys/class/power_supply/battery/video
-   chown sdcard_rw sdcard_rw /sys/class/power_supply/battery/music
-   chown sdcard_rw sdcard_rw /sys/class/power_supply/battery/browser
-   chown sdcard_rw sdcard_rw /sys/class/power_supply/battery/hotspot
-   chown sdcard_rw sdcard_rw /sys/class/power_supply/battery/camera
-   chown system radio /sys/class/power_supply/battery/talk_wcdma
-   chown system radio /sys/class/power_supply/battery/talk_gsm
-   chown system radio /sys/class/power_supply/battery/call
-   chown system radio /sys/class/power_supply/battery/data_call
-   chown gps radio /sys/class/power_supply/battery/gps
-   chown system radio /sys/class/power_supply/battery/wifi
-   chown system radio /sys/class/power_supply/battery/lte
 
 # Thermistor node
     chown radio system /sys/devices/platform/sec-thermistor/temp_adc
@@ -358,7 +329,7 @@ on property:sys.boot_completed=1
 	chown system system /sys/class/sec/led/led_blink
 	chown system system /sys/class/sec/led/led_br_lev
 
-# Sensors & NFC
+# <Sensors & NFC>
 # Input Events
     chown system radio /sys/class/input/input2/enable
     chown system radio /sys/class/input/input2/poll_delay
@@ -423,7 +394,6 @@ on property:sys.boot_completed=1
     chown system radio /sys/class/sensors/ssp_sensor/mcu_sleep_test
     chown system radio /sys/class/sensors/ssp_sensor/ori_poll_delay
     chown system radio /sys/class/sensors/ssp_sensor/mag_poll_delay
-	
 
 # for datarouter
     chown system system /dev/dun
@@ -483,27 +453,25 @@ on boot
     chown radio system /sys/class/sec/sec_epen/epen_checksum_result
     chown radio system /sys/class/sec/sec_epen/epen_reset
     
-# permission for HDMI audio path
-    chown media audio /sys/class/hdmi_audio/hdmi_audio/hdmi_audio_set_ext
-    
 # wakeup keys
     chown radio system /sys/class/sec/sec_key/wakeup_keys
     write /sys/class/sec/sec_key/wakeup_keys 116,172
-	
-# create filesystem if necessary
-service setup_fs /system/bin/setup_fs \
-            /dev/block/mmcblk0p3 \
-            /dev/block/mmcblk0p4
-    class core
-    user root
-    group root
-    oneshot
 
 # serial keyboard daemon
 service sec_keyboard /system/bin/sec_keyboard /dev/ttySAC2
 	class late_start
 	disabled
 	group system
+
+# SISO-ANDR_PERF :: START Changing scheduler to cfq and reseting cpu min freq to -1 after boot complete
+on property:sys.boot_completed=1
+    write /sys/block/mmcblk0/queue/scheduler cfq
+    write /sys/power/cpufreq_min_limit -1
+#    write /proc/sys/net/ipv6/conf/rmnet_usb0/accept_ra 2
+#    write /proc/sys/net/ipv6/conf/rmnet_usb1/accept_ra 2
+#    write /proc/sys/net/ipv6/conf/rmnet_usb2/accept_ra 2
+#    write /proc/sys/net/ipv6/conf/rmnet_usb3/accept_ra 2
+# SISO-ANDR_PERF :: END
 
 on property:ro.uart_debug=0
 	start sec_keyboard
@@ -572,12 +540,26 @@ service iprenew_bnep0 /system/bin/dhcpcd -n
 service macloader /system/bin/macloader
     class main
     oneshot
-	
+
+service netmgrd /system/bin/netmgrd
+    class late_start
+
+service SMD-daemon /system/bin/smdexe
+    class main
+    user root
+    group system radio inet net_raw
+
+service qc_kickstart /system/bin/qcks s
+    class core
+    user root
+    group radio cache inet misc audio sdcard_rw log
+
 service secril-daemon /system/bin/sec-ril
     class main
     user root
     group radio cache inet misc audio sdcard_rw qcom_diag log
-	
+
+#For EncryptionMode - remove disabled, Modify class main
 service qmiproxy /system/bin/qmiproxy
     class main
     user radio
@@ -587,16 +569,7 @@ service qmuxd /system/bin/qmuxd
     class main
     user root
     group radio log audio bluetooth gps log
-	
-#QCRIL
-service netmgrd /system/bin/netmgrd
-    class late_start
 
-service qc_kickstart /system/bin/qcks s
-    class core
-    user root
-    group radio cache inet misc audio sdcard_rw log
-    
 #start GNSS/Sensor interface daemon
 service gsiff_daemon /system/bin/gsiff_daemon
     class late_start
@@ -610,18 +583,11 @@ service sensorhubservice /system/bin/sensorhubservice
     group input
 
 # TVout
-service TvoutService_C /system/bin/bintvoutservice
-    class main
-    user system
-    group graphics
+#service TvoutService_C /system/bin/bintvoutservice
+#    class main
+#    user system
+#    group graphics
+
 
 on property:ro.tvout.enable=false
     stop TvoutService_C
-	
-on property:ro.use_data_netmgrd=false
-#netmgr not supported on specific target
-    stop netmgrd
-	
-on property:ro.use_data_netmgrd=true
-    start netmgrd
-	
