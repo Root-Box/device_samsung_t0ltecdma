@@ -82,7 +82,7 @@ PRODUCT_PACKAGES += \
     com.android.nfc_extras \
     Stk
 
-$(call inherit-product, vendor/cm/config/nfc_enhanced.mk)
+$(call inherit-product, $(LOCAL_PATH)/configs/nfc_enhanced.mk)
 
 # RIL
 PRODUCT_PROPERTY_OVERRIDES += \
