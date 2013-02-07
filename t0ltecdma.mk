@@ -39,6 +39,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/80cfw:system/etc/init.d/80cfw
 
+# Audio
+PRODUCT_COPY_FILES += \
+        $(LOCAL_PATH)/configs/tiny_hw.xml:system/etc/sound/t0ltecdma
+
 # Gps
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/gps.conf:system/etc/gps.conf
