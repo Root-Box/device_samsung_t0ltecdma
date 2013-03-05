@@ -4,7 +4,7 @@
     <string-array name="reboot_options">
             <item>@string/reboot</item>
             <item>@string/reboot_recovery</item>
-            <item>@string/reboot_bootloader</item>
+            <item>@string/reboot_download</item>
     </string-array>
 
     <!-- reboot values -->
