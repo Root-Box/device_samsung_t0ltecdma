@@ -35,10 +35,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/lpm.rc:root/lpm.rc \
     $(LOCAL_PATH)/ueventd.smdk4x12.rc:recovery/root/ueventd.smdk4x12.rc
 
-# Camera FW
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/80cfw:system/etc/init.d/80cfw
-
 # Audio
 PRODUCT_COPY_FILES += \
         $(LOCAL_PATH)/configs/tiny_hw.xml:system/etc/sound/t0ltecdma
