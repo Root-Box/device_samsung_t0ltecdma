@@ -37,11 +37,11 @@ PRODUCT_COPY_FILES += \
 
 # Audio
 PRODUCT_COPY_FILES += \
-        $(LOCAL_PATH)/configs/tiny_hw.xml:system/etc/sound/t0ltecdma
+        device/samsung/t0lte/configs/tiny_hw.xml:system/etc/sound/t0ltecdma
 
 # GPS
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/gps.conf:system/etc/gps.conf
+    device/samsung/t0lte/configs/gps.conf:system/etc/gps.conf
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/Diag_zero.cfg:system/etc/Diag_zero.cfg \
