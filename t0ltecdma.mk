@@ -36,8 +36,8 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/ueventd.smdk4x12.rc:recovery/root/ueventd.smdk4x12.rc
 
 # Audio
-PRODUCT_COPY_FILES += \
-        device/samsung/t0lte/configs/tiny_hw.xml:system/etc/sound/t0ltecdma
+PRODUCT_PACKAGES += \
+    tiny_hw
 
 # GPS
 PRODUCT_COPY_FILES += \
