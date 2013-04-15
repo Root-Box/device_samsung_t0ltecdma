@@ -41,7 +41,7 @@ PRODUCT_PACKAGES += \
 
 # GPS
 PRODUCT_COPY_FILES += \
-    device/samsung/t0lte/configs/gps.conf:system/etc/gps.conf
+    device/samsung/t0ltecdma/configs/gps.conf:system/etc/gps.conf
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/Diag_zero.cfg:system/etc/Diag_zero.cfg \
