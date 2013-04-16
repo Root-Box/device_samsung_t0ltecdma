@@ -36,5 +36,8 @@ COMMON_GLOBAL_CFLAGS += -DPROPERTY_PERMS_APPEND='{ "ril.ks.status", AID_SYSTEM, 
 # Camera
 COMMON_GLOBAL_CFLAGS += -DCAMERA_WITH_CITYID_PARAM
 
+# GPS
+BOARD_GPS_SET_PRIVACY := true
+
 # inherit from the proprietary version
 -include vendor/samsung/t0ltecdma/BoardConfigVendor.mk
