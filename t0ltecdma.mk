@@ -45,7 +45,8 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/Diag_zero.cfg:system/etc/Diag_zero.cfg \
-    $(LOCAL_PATH)/configs/Diag.cfg:system/etc/Diag.cfg
+    $(LOCAL_PATH)/configs/Diag.cfg:system/etc/Diag.cfg \
+    $(LOCAL_PATH)/configs/nvram_net.txt:system/etc/wifi/nvram_net.txt
 
 # Camera
 COMMON_GLOBAL_CFLAGS += -DCAMERA_WITH_CITYID_PARAM
