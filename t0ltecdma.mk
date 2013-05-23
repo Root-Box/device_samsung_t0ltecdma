@@ -90,7 +90,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.telephony.ril_class=SamsungCDMAQualcommRIL \
     mobiledata.interfaces=pdp0,wlan0,gprs,ppp0,rmnet_usb0 \
     ro.ril.hsxpa=1 \
-    ro.ril.gprsclass=10
+    ro.ril.gprsclass=10 \
+    ro.config.qc_lte_network_modes=true
 
 # These are the hardware-specific features
 PRODUCT_COPY_FILES += \
