@@ -39,10 +39,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     tiny_hw
 
-# GPS
-PRODUCT_COPY_FILES += \
-    device/samsung/t0ltecdma/configs/gps.conf:system/etc/gps.conf
-
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/Diag_zero.cfg:system/etc/Diag_zero.cfg \
     $(LOCAL_PATH)/configs/Diag.cfg:system/etc/Diag.cfg \
